@@ -38,7 +38,9 @@ const Follow: React.FC<FollowProps> = ({ title, data, closeModal }) => {
   };
 
   const truncate = (str: string | null, n: number) => {
-    return str ?? length > n ? str?.substring(0, n - 1) + "..." : str;
+    return str?.length !== undefined && str?.length > n
+      ? str?.substring(0, n - 1) + "..."
+      : str;
   };
 
   return (
@@ -53,7 +55,7 @@ const Follow: React.FC<FollowProps> = ({ title, data, closeModal }) => {
           </UserProfileImg>
           <UserProfileDesc>
             <p>{userName}</p>
-            <p>{truncate(userDesc, 20)}</p>
+            <p>{truncate(userDesc, 18)}</p>
           </UserProfileDesc>
         </UserContent>
         <FollowButton $status={followStatus} onClick={handleFollowClick}>
