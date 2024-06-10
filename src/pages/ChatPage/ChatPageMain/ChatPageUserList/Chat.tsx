@@ -5,6 +5,8 @@ import {
   ChatContainer,
   ChatImgContainer,
   ChatInfoContainer,
+  ChatNameContainer,
+  DiaryMemberCount,
 } from "./Chat.styles.ts";
 
 import userAvatar from "../../../../assets/images/UserAvatar.png";
@@ -43,9 +45,15 @@ const Chat: React.FC<ChatProps> = ({ chat }) => {
       </ChatImgContainer>
       <ChatInfoContainer $diaryId={chat?.diaryId}>
         {userId || diaryId ? (
-          <p>{truncate(chat?.chatRoomName, 12)}</p>
+          <ChatNameContainer $diaryId={chat?.diaryId}>
+            <p>{truncate(chat?.chatRoomName, 12)}</p>
+            <DiaryMemberCount />
+          </ChatNameContainer>
         ) : (
-          <p>{truncate(chat?.chatRoomName, 50)}</p>
+          <ChatNameContainer $diaryId={chat?.diaryId}>
+            <p>{truncate(chat?.chatRoomName, 50)}</p>
+            <DiaryMemberCount />
+          </ChatNameContainer>
         )}
         {userId || diaryId ? (
           <p>{truncate(chat?.chatMessagePreview, 17)}</p>
