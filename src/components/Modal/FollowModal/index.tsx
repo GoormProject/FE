@@ -27,7 +27,7 @@ const FollowModal: FC<FollowModalProps> = ({ title, closeModal, userId }) => {
   useOnClickOutside(modalRef, () => {
     closeModal(false);
   });
-  if (isLoading) return <>로딩중...</>;
+  // if (isLoading) return <>로딩중...</>;
   if (isError) return <>{error?.message}</>;
 
   return (
@@ -35,10 +35,14 @@ const FollowModal: FC<FollowModalProps> = ({ title, closeModal, userId }) => {
       <FollowModalContent>
         <TitleContainer>
           <p>
-            {data.length} {title}
+            {data?.length} {title}
           </p>
         </TitleContainer>
-        <FollowList closeModal={closeModal} data={data} title={title} />
+        {isLoading ? (
+          <>{title}데이터를 불러오는 중 입니다....</>
+        ) : (
+          <FollowList closeModal={closeModal} data={data} title={title} />
+        )}
       </FollowModalContent>
     </FollowModalContainer>
   );
