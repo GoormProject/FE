@@ -10,12 +10,15 @@ interface ChattingStoreProps {
   fetchMessages: (messages: MessageListType[]) => void;
   setStompClient: (client: Client) => void;
   setChatRoomId: (id: number) => void;
+  initialLoadComplete: boolean;
+  setInitialLoadComplete: (isLoading: boolean) => void;
 }
 
 export const useChattingStore = create<ChattingStoreProps>((set) => ({
   messages: [],
   stompClient: null,
   chatRoomId: null,
+  initialLoadComplete: false,
   setMessages: (message) =>
     set((prev) => ({
       messages: [...prev.messages, message],
@@ -31,5 +34,9 @@ export const useChattingStore = create<ChattingStoreProps>((set) => ({
   setChatRoomId: (id) =>
     set(() => ({
       chatRoomId: id,
+    })),
+  setInitialLoadComplete: (isLoading) =>
+    set(() => ({
+      initialLoadComplete: isLoading,
     })),
 }));

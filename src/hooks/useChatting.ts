@@ -23,26 +23,26 @@ export const useChatListMutation = () => {
 };
 
 export const useFetchChatHistory = (size: number, chatRoomId: number) => {
-  const { isLoading, data, ...rest } = useInfiniteQuery({
-    queryKey: [queryKeys.chatPaginated, size, chatRoomId],
-    enabled: !!chatRoomId,
-    staleTime: 50000000000000,
-    queryFn: ({ pageParam }) => {
-      return api.get(
-        `/api/chat/messages?page=${pageParam}&size=${size}&chatRoomId=${chatRoomId}`,
-      );
-    },
-    initialPageParam: 0,
-    getNextPageParam: (lastPage) => {
-      if (lastPage.data.data.hasNext) {
-        return lastPage.data.data.page + 1;
-      } else {
-        return null;
-      }
-    },
-    select: (r) => {
-      return r.pages.flatMap((r) => r.data.data);
-    },
-  });
-  return { data, isLoading, ...rest };
+  const { isLoading, data, isError, error, hasNextPage, fetchNextPage } =
+    useInfiniteQuery({
+      queryKey: [queryKeys.chatPaginated, size, chatRoomId],
+      enabled: !!chatRoomId,
+      queryFn: ({ pageParam }) => {
+        return api.get(
+          `/api/chat/messages?page=${pageParam}&size=${size}&chatRoomId=${chatRoomId}`,
+        );
+      },
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) => {
+        if (lastPage.data.data.hasNext) {
+          return lastPage.data.data.page + 1;
+        } else {
+          return null;
+        }
+      },
+      select: (r) => {
+        return r.pages.flatMap((r) => r.data.data);
+      },
+    });
+  return { data, isLoading, isError, error, hasNextPage, fetchNextPage };
 };

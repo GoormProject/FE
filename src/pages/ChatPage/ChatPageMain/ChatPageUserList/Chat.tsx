@@ -11,6 +11,7 @@ import {
 
 import userAvatar from "../../../../assets/images/UserAvatar.png";
 import { useNavigate, useParams } from "react-router-dom";
+import { useChattingStore } from "../../../../store/chattingStore/chattingStore.ts";
 
 interface ChatProps {
   chat: ChatType;
@@ -18,6 +19,9 @@ interface ChatProps {
 
 const Chat: React.FC<ChatProps> = ({ chat }) => {
   const { userId, diaryId } = useParams();
+  const setInitialLoadComplete = useChattingStore(
+    (state) => state.setInitialLoadComplete,
+  );
 
   const navigate = useNavigate();
   const handleChatRoomClick = () => {
@@ -25,8 +29,10 @@ const Chat: React.FC<ChatProps> = ({ chat }) => {
       return;
     }
     if (chat?.userId) {
+      setInitialLoadComplete(false);
       navigate(`/chat/${chat.userId}?roomName=${chat.chatRoomName}`);
     } else {
+      setInitialLoadComplete(false);
       navigate(`/chat/group/${chat.diaryId}?roomName=${chat.chatRoomName}`);
     }
   };
