@@ -33,16 +33,20 @@ interface AccMessage {
 
 const ChatPageChat: React.FC = () => {
   const [scrollHeight, setScrollHeight] = useState(0);
-  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
+  // const [initialLoadComplete, setInitialLoadComplete] = useState(false);
   const [searchParams] = useSearchParams();
   const roomName = searchParams.get("roomName");
   const messageEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const topRef = useRef<HTMLDivElement | null>(null);
 
-  const { messages, fetchMessages, chatRoomId } = useChattingStore(
-    (state) => state,
-  );
+  const {
+    messages,
+    fetchMessages,
+    chatRoomId,
+    initialLoadComplete,
+    setInitialLoadComplete,
+  } = useChattingStore((state) => state);
 
   const {
     isLoading,
@@ -54,15 +58,18 @@ const ChatPageChat: React.FC = () => {
   } = useFetchChatHistory(20, Number(chatRoomId));
 
   useEffect(() => {
-    fetchMessages([]);
-    queryClient.invalidateQueries?.({
-      queryKey: [queryKeys.chatPaginated, 20, chatRoomId],
-    });
-  }, [chatRoomId]);
+    if (chatRoomId) {
+      queryClient.invalidateQueries?.({
+        queryKey: [queryKeys.chatPaginated, 20, chatRoomId],
+      });
+    }
 
-  useEffect(() => {
-    setInitialLoadComplete(false);
-  }, []);
+    return () => {
+      queryClient.removeQueries({
+        queryKey: [queryKeys.chatPaginated, 20, chatRoomId],
+      });
+    };
+  }, [chatRoomId]);
 
   useEffect(() => {
     if (messageHistory) {
@@ -90,16 +97,18 @@ const ChatPageChat: React.FC = () => {
   }, [messageHistory]);
 
   useEffect(() => {
+    const messageList = messageHistory?.flatMap((r) => r.chatMessageList);
+
     if (!messagesContainerRef) return;
     if (
       messagesContainerRef.current &&
-      messages.length === messageHistory?.length
+      messages.length === messageList?.length
     ) {
       messagesContainerRef.current.scrollTop =
         messagesContainerRef.current.scrollHeight - scrollHeight;
       setScrollHeight(messagesContainerRef.current.scrollHeight);
     }
-    if (messages.length > (messageHistory ? messageHistory?.length : 0)) {
+    if (messages.length > (messageList ? messageList?.length : 0)) {
       messageEndRef.current?.scrollIntoView({ behavior: "instant" });
     }
   }, [messages?.length]);
