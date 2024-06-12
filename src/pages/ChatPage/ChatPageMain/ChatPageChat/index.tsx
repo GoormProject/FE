@@ -33,7 +33,6 @@ interface AccMessage {
 
 const ChatPageChat: React.FC = () => {
   const [scrollHeight, setScrollHeight] = useState(0);
-  // const [initialLoadComplete, setInitialLoadComplete] = useState(false);
   const [searchParams] = useSearchParams();
   const roomName = searchParams.get("roomName");
   const messageEndRef = useRef<HTMLDivElement>(null);
